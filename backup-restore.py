@@ -11,7 +11,7 @@ jellyfin_url = os.getenv("JELLYFIN_URL")
 
 
 def backup(username):
-    usersurl = f"http://{jellyfin_url}:8096/Users"
+    usersurl = f"{jellyfin_url}/Users"
     users = requests.get(usersurl, params={"apikey": apikey})
     if users.status_code == 401:
         print("Invalid API key")
@@ -26,7 +26,7 @@ def backup(username):
     if not userid:
         print(f"User {username} not found!")
         sys.exit(1)
-    user = requests.get(f"http://{jellyfin_url}:8096/Users/{userid}", params={"apikey": apikey, "userId": userid})
+    user = requests.get(f"{jellyfin_url}/Users/{userid}", params={"apikey": apikey, "userId": userid})
     username = user.json()['Name']
 
     output = {
@@ -34,7 +34,7 @@ def backup(username):
         "backupdate": datetime.now().isoformat(),
         "items": []
     }
-    baseurl=f"http://{jellyfin_url}:8096/Items"
+    baseurl=f"{jellyfin_url}/Items"
     params={"apikey": apikey,
         "userId": userid,
         "isPlayed": True,
@@ -60,7 +60,7 @@ def backup(username):
         if not isin:
             data["Items"].append(item)
 
-    favoritepeople = f"http://{jellyfin_url}:8096/Persons"
+    favoritepeople = f"{jellyfin_url}/Persons"
     params = {"Recursive": True,
     "IsFavorite": True,
     "userId": userid,
@@ -83,7 +83,7 @@ def backup(username):
         itemid = item['Id']
         if item['LocationType'] == "Virtual":
             continue
-        pathrequest = requests.get(f"http://{jellyfin_url}:8096/Users/{userid}/Items/{itemid}", params={"apikey": apikey, "userId": userid})
+        pathrequest = requests.get(f"{jellyfin_url}/Users/{userid}/Items/{itemid}", params={"apikey": apikey, "userId": userid})
         pathdata = pathrequest.json()
 
         imdbid, tmdbid, tvdbid = None, None, None
@@ -114,7 +114,7 @@ def restore(dryrun=False):
     data = json.loads(data)
     username = data["username"]
     print(f"Restoring {len(data['items'])} items for {username} from {data['backupdate']}...")
-    usersurl = f"http://{jellyfin_url}:8096/Users"
+    usersurl = f"{jellyfin_url}/Users"
     users = requests.get(usersurl, params={"apikey": apikey})
     if users.status_code == 401:
         print("Invalid API key")
@@ -127,7 +127,7 @@ def restore(dryrun=False):
     if not userid:
         print(f"User {username} not found")
 
-    baseurl=f"http://{jellyfin_url}:8096/Items"
+    baseurl=f"{jellyfin_url}/Items"
     params={"apikey": apikey,
         "userId": userid,
         "recursive": True,
@@ -137,7 +137,7 @@ def restore(dryrun=False):
     all_items = r.json()
     people = {}
     for i in all_items['Items']:
-            url = f"http://{jellyfin_url}:8096/Users/{userid}/Items/{i['Id']}"
+            url = f"{jellyfin_url}/Users/{userid}/Items/{i['Id']}"
             params = {"apikey": apikey,
                 "userId": userid}
             r = requests.get(url, params=params)
@@ -157,7 +157,7 @@ def restore(dryrun=False):
             found_item = item_search(all_items, item['Type'], name=item.get('Name'), series_name=item.get('SeriesName'), season_name=item.get('SeasonName'), imdbid=item.get('imdbid'), tmdbid=item.get('tmdbid'), tvdbid=item.get('tvdbid'))
         if found_item:
             # favorites need to be first, because jellyfin marks items as played if they are favorited
-            favorite_url = f"http://{jellyfin_url}:8096/Users/{userid}/FavoriteItems/{found_item['Id']}"
+            favorite_url = f"{jellyfin_url}/Users/{userid}/FavoriteItems/{found_item['Id']}"
             favorite_params = {"apikey": apikey}
             if item['IsFavorite']:
                 if not dryrun:
@@ -166,7 +166,7 @@ def restore(dryrun=False):
                 if not dryrun:
                     requests.delete(favorite_url, params=favorite_params)
             if found_item['Type'] != "Person":
-                played_url = f"http://{jellyfin_url}:8096/Users/{userid}/PlayedItems/{found_item['Id']}"
+                played_url = f"{jellyfin_url}/Users/{userid}/PlayedItems/{found_item['Id']}"
                 played_params = {"apikey": apikey}
                 if item['Played']:
                     if not dryrun:
