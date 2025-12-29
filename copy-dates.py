@@ -79,8 +79,8 @@ def main():
     parser = argparse.ArgumentParser(description="Copy date fields between Jellyfin databases")
     parser.add_argument(
         "--source-db",
-        default="/config/jellyfin/data/data/jellyfin.db",
-        help="Source database (default: %(default)s)",
+        required=True,
+        help="Source database path (required)",
     )
     parser.add_argument(
         "--dest-db",

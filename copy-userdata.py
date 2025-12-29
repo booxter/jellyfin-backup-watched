@@ -12,7 +12,6 @@ import argparse
 import sqlite3
 import sys
 
-DEFAULT_SOURCE_DB_PATH = '/config/jellyfin/data/data/jellyfin.db'  # Source database (where the matching records come from)
 DEFAULT_DEST_DB_PATH = '/var/lib/jellyfin/data/jellyfin.db'  # Destination database (where the user data is written)
 
 
@@ -136,8 +135,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Copy Jellyfin user data between databases")
     parser.add_argument(
         "--source-db",
-        default=DEFAULT_SOURCE_DB_PATH,
-        help="Source database path (default: %(default)s)",
+        required=True,
+        help="Source database path (required)",
     )
     parser.add_argument(
         "--dest-db",
