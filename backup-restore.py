@@ -202,12 +202,13 @@ if __name__ == "__main__":
     parser.add_argument("--restore", action="store_true", help="Restore Jellyfin library")
     parser.add_argument("--dryrun", action="store_true", help="Don't actually restore anything")
     args = parser.parse_args()
-    if not args.username:
+    if not args.backup and not args.restore:
+        parser.print_help()
+        sys.exit(1)
+    if args.backup and not args.username:
         print("Please specify a Jellyfin user (with --username) to backup")
         sys.exit(1)
     if args.backup:
         backup(args.username)
     if args.restore:
         restore(dryrun=args.dryrun)
-    if not args.backup and not args.restore:
-        parser.print_help()
