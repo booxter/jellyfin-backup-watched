@@ -4,8 +4,11 @@ import sys
 import argparse
 import os
 from datetime import datetime
-from dotenv import load_dotenv
-load_dotenv()
+from dotenv import load_dotenv, find_dotenv
+
+# Load .env from the current working directory (or its parents) so `nix run`
+# can pick up user-provided credentials.
+load_dotenv(find_dotenv(usecwd=True) or None)
 
 
 def load_config():

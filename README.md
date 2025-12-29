@@ -36,7 +36,16 @@ nix run .#copy-dates -- --source-db /path/to/source.db
 nix run .#copy-userdata -- --source-db /path/to/source.db
 nix run .#backup-restore -- --username alice --backup
 nix run .#backup-restore -- --restore
+nix run .#backup-restore -- --restore --dryrun
 nix develop   # drop into a shell with dependencies
+
+# Pass env vars inline when running with nix
+JELLYFIN_URL=http://localhost:8096 JELLYFIN_API_KEY=abcd \
+  nix run .#backup-restore -- --backup --username alice
 ```
 
 The flake pins `nixpkgs` to `nixos-25.11` and builds Python with `requests` and `python-dotenv`. Apps are exposed for each script so you can run them from any machine with Nix.
+
+Environment with Nix:
+- Inline as above; or
+- Put `JELLYFIN_URL`/`JELLYFIN_API_KEY` in a `.env` in the directory you run from; `python-dotenv` loads it (searches current dir and parents) even when invoked via `nix run`.
