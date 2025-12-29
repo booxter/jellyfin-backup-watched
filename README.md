@@ -13,13 +13,15 @@ Environment: set `JELLYFIN_URL` (base URL with scheme, e.g. `http://localhost:80
 ```bash
 # Backup (needs username)
 python backup-restore.py --username alice --backup
+# Backup all users
+python backup-restore.py --backup
 
 # Restore from jellyfin.json (username comes from the file; no CLI username needed)
 python backup-restore.py --restore
 python backup-restore.py --restore --dryrun  # simulate restore
 
 How it works:
-- `backup-restore.py` calls the Jellyfin API with your key to list items for the given user, writes selections to `jellyfin.json`, and on restore uses API calls to mark favorites/played based on that file.
+- `backup-restore.py` calls the Jellyfin API with your key to list items for the given user (or all users), writes selections to `jellyfin.json`, and on restore uses API calls to mark favorites/played based on that file.
 
 python copy-dates.py --source-db /path/to/source.db --dest-db /var/lib/jellyfin/data/jellyfin.db
 python copy-userdata.py --source-db /path/to/source.db --dest-db /var/lib/jellyfin/data/jellyfin.db
@@ -35,6 +37,7 @@ Notes:
 nix run .#copy-dates -- --source-db /path/to/source.db
 nix run .#copy-userdata -- --source-db /path/to/source.db
 nix run .#backup-restore -- --username alice --backup
+nix run .#backup-restore -- --backup   # all users
 nix run .#backup-restore -- --restore
 nix run .#backup-restore -- --restore --dryrun
 nix develop   # drop into a shell with dependencies
