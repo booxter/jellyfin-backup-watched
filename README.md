@@ -8,7 +8,7 @@ Small helpers to back up or copy Jellyfin state between databases:
 
 ## Direct usage
 
-Environment: set `JELLYFIN_URL` (base URL, e.g. `http://localhost:8096`) and `JELLYFIN_API_KEY` (admin key). You can put them in a `.env` file; they’re read via `python-dotenv`.
+Environment: set `JELLYFIN_URL` (base URL with scheme, e.g. `http://localhost:8096`) and `JELLYFIN_API_KEY` (admin key). You can put them in a `.env` file; they’re read via `python-dotenv`.
 
 ```bash
 # Backup (needs username)

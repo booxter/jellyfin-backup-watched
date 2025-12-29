@@ -6,8 +6,24 @@ import os
 from datetime import datetime
 from dotenv import load_dotenv
 load_dotenv()
-apikey = os.getenv("JELLYFIN_API_KEY")
-jellyfin_url = os.getenv("JELLYFIN_URL")
+
+
+def load_config():
+    url = os.getenv("JELLYFIN_URL")
+    key = os.getenv("JELLYFIN_API_KEY")
+    if not url:
+        print("JELLYFIN_URL is not set (e.g. http://localhost:8096)")
+        sys.exit(1)
+    if not url.startswith(("http://", "https://")):
+        print(f"JELLYFIN_URL must include http/https scheme; got: {url}")
+        sys.exit(1)
+    if not key:
+        print("JELLYFIN_API_KEY is not set (admin API key required)")
+        sys.exit(1)
+    return url.rstrip("/"), key
+
+
+jellyfin_url, apikey = load_config()
 
 
 def backup(username):
