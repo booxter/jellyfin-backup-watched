@@ -13,7 +13,7 @@ import sqlite3
 import sys
 
 DEFAULT_SOURCE_DB_PATH = '/config/jellyfin/data/data/jellyfin.db'  # Source database (where the matching records come from)
-DEFAULT_DEST_DB_PATH = '/config/jellyfin2/data/data/jellyfin.db'  # Destination database (where the user data is written)
+DEFAULT_DEST_DB_PATH = '/var/lib/jellyfin/data/jellyfin.db'  # Destination database (where the user data is written)
 
 
 def copy_userdata(source_db_path, dest_db_path):

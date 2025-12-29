@@ -84,7 +84,7 @@ def main():
     )
     parser.add_argument(
         "--dest-db",
-        default="/config/jellyfin2/data/data/jellyfin.db",
+        default="/var/lib/jellyfin/data/jellyfin.db",
         help="Destination database (default: %(default)s)",
     )
     args = parser.parse_args()
