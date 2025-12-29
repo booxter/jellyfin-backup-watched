@@ -8,18 +8,21 @@
 # Tested only on Jellyfin 10.11.1 (after the major database overhaul to EF Core)
 #
 
+import argparse
 import sqlite3
 import sys
 
-# --- CONFIGURATION ---
-SOURCE_DB_PATH = '/config/jellyfin/data/data/jellyfin.db'  # Source database (where the matching records come from)
-TARGET_DB_PATH = '/config/jellyfin2/data/data/jellyfin.db'  # Target database (where the DateCreated field is updated)
+DEFAULT_SOURCE_DB_PATH = '/config/jellyfin/data/data/jellyfin.db'  # Source database (where the matching records come from)
+DEFAULT_DEST_DB_PATH = '/config/jellyfin2/data/data/jellyfin.db'  # Destination database (where the user data is written)
 
-def main():
+
+def copy_userdata(source_db_path, dest_db_path):
+    source_conn = None
+    target_conn = None
     try:
         # Connect to both databases
-        source_conn = sqlite3.connect(SOURCE_DB_PATH)
-        target_conn = sqlite3.connect(TARGET_DB_PATH)
+        source_conn = sqlite3.connect(source_db_path)
+        target_conn = sqlite3.connect(dest_db_path)
 
         # Create separate cursors
         source_cur = source_conn.cursor()
@@ -123,9 +126,23 @@ def main():
         sys.exit(1)
 
     finally:
-        source_conn.close()
-        target_conn.close()
+        if source_conn:
+            source_conn.close()
+        if target_conn:
+            target_conn.close()
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="Copy Jellyfin user data between databases")
+    parser.add_argument(
+        "--source-db",
+        default=DEFAULT_SOURCE_DB_PATH,
+        help="Source database path (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--dest-db",
+        default=DEFAULT_DEST_DB_PATH,
+        help="Destination database path (default: %(default)s)",
+    )
+    args = parser.parse_args()
+    copy_userdata(args.source_db, args.dest_db)

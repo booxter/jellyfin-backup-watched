@@ -9,6 +9,7 @@
 # Tested only on Jellyfin 10.11.1 (after the major database overhaul to EF Core)
 #
 
+import argparse
 import sqlite3
 
 def update_date_created(source_db_path, target_db_path):
@@ -74,9 +75,22 @@ def update_date_created(source_db_path, target_db_path):
         source_cursor.close()
         source_conn.close()
 
-# Specify the paths to the SQLite databases
-source_db_path = '/config/jellyfin/data/data/jellyfin.db'  # Source database (where the matching records come from)
-target_db_path = '/config/jellyfin2/data/data/jellyfin.db'  # Target database (where the DateCreated field is updated)
+def main():
+    parser = argparse.ArgumentParser(description="Copy date fields between Jellyfin databases")
+    parser.add_argument(
+        "--source-db",
+        default="/config/jellyfin/data/data/jellyfin.db",
+        help="Source database (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--dest-db",
+        default="/config/jellyfin2/data/data/jellyfin.db",
+        help="Destination database (default: %(default)s)",
+    )
+    args = parser.parse_args()
 
-# Call the function to update the records
-update_date_created(source_db_path, target_db_path)
+    update_date_created(args.source_db, args.dest_db)
+
+
+if __name__ == "__main__":
+    main()
